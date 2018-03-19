@@ -11,10 +11,10 @@ N = 10
 # Define the number of filled spatial orbitals
 Nhalf = N / 2
 
-VNN = float(open("../lib/vnn","r").readlines()[0])
-S = read_one_electron_integrals("../lib/overlap")
-H = read_one_electron_integrals("../lib/one-electron")
-V = read_two_electron_integrals("../lib/two-electron",nao)
+VNN = float(open("../static/vnn","r").readlines()[0])
+S = read_one_electron_integrals("../static/overlap")
+H = read_one_electron_integrals("../static/one-electron")
+V = read_two_electron_integrals("../static/two-electron",nao)
 
 np.set_printoptions(precision=5,linewidth=100)
 
