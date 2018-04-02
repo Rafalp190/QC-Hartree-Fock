@@ -8,7 +8,7 @@ def form_G(D, V, nao):
 		for v in range(0,nao):
 			for p in range(0,nao):
 				for o in range(0,nao):
-					G[u][v] = D[p][o] * ((2*V[u][v][p][o]) - V[u][p][v][o])
+					G[u][v] += D[u][v] * ((2*V[u][v][p][o]) - V[u][p][v][o])
 	return G
 
 def form_E(D, H, F, nao):
@@ -23,7 +23,7 @@ def form_D(C, Nhalf, nao):
 	for m in range(0,nao):
 		for n in range(0,nao):
 			for i in range(0,Nhalf):
-				D_temp[m][n] = C[m][i] * C[n][i]
+				D_temp[m][n] += C[m][i] * C[n][i]
 	return D_temp
 
 def form_delta_D(D, D_i, nao):
@@ -48,8 +48,8 @@ V = read_two_electron_integrals("../static/two-electron",nao)
 
 np.set_printoptions(precision=5,linewidth=100)
 
-#print("S matrix:\n",S)
-#print("H matrix:\n",H)
+print("S matrix:\n",S)
+print("H matrix:\n",H)
 
 # Print the two-electron integrals in chemist notation
 # for m in range(0,nao):
@@ -75,23 +75,24 @@ s = eigS[0]
 L = eigS[1]
 #print(L)
 s_diag = np.diag(s**(-0.5))
-X = L @ s_diag @ np.transpose(L)
+X = L @ s_diag @np.transpose(L)
 
 print("X matrix\n",X)
-#Y = np.transpose(X) @ S @ X
-#print(Y)
+Y = np.transpose(X) @ S @ X
+print("Y matrix\n",Y)
 
 
 #Initialization of values
 D = np.zeros((nao, nao))
 
 k = 0
-k_bound = 1
+k_bound = 100
 E = 0
 non_convergence = True
 print("------------------------------------")
 
-while k<k_bound or non_convergence == False:
+while k<k_bound and non_convergence == True:
+	#print("holo")
 	G = form_G(D, V, nao)
 
 	print("G matrix")
@@ -131,12 +132,25 @@ while k<k_bound or non_convergence == False:
 		delta_E = E_i - E
 		#print(delta_E)
 		delta_D = form_delta_D(D, D_i, nao)
+		print("-------------------------------------------------------------------------")
+		print("Results: \n")
+		print("-------------------------------------------------------------------------")
+		print("Iterations: \n", k+1)
+		print("Energy:\n",E)
 		if abs(delta_E) < 10e-9 and abs(delta_D) < 10e-5:
 			non_convergence = False
+			print("Converges for delta_E and delta_D")
+		elif abs(delta_E) < 10e-9 and abs(delta_D) > 10e-5:
+			print("Converges for delta_E")
+		elif abs(delta_E) > 10e-9 and abs(delta_D) < 10e-5:
+			print("Converges for delta_D")
+		else:
+			print("Non-Convergent")
 		E =  E_i
 
 		D = D_i
 		k += 1
-print(k)
-print(E)
-print(D)
+		print("-------------------------------------------------------------------------")
+	
+	
+	
