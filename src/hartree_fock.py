@@ -8,7 +8,7 @@ def form_G(D, V, nao):
 		for v in range(0,nao):
 			for p in range(0,nao):
 				for o in range(0,nao):
-					G[u][v] += D[u][v] * ((2*V[u][v][p][o]) - V[u][p][v][o])
+					G[u][v] += D[p][o] * ((2*V[u][v][p][o]) - V[u][p][v][o])
 	return G
 
 def form_E(D, H, F, nao):
@@ -86,7 +86,7 @@ print("Y matrix\n",Y)
 D = np.zeros((nao, nao))
 
 k = 0
-k_bound = 100
+k_bound = 1000
 E = 0
 non_convergence = True
 print("------------------------------------")
